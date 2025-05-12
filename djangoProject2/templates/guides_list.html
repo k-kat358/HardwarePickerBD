@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-4" style="max-width: 800px; margin: 0 auto;">
+    <h1 class="text-center mb-4" style="font-size: 28px; color: #343a40;">Guides Blog</h1>
+
+    <!-- Create Guide Button -->
+    {% if user.is_authenticated and user.is_superuser %}
+    <div class="text-end mb-3">
+        <a href="{% url 'guide_create' %}" class="btn btn-primary" style="width: 150px;">Create Guide</a>
+    </div>
+    {% endif %}
+
+    <!-- Blog Style Guides -->
+    {% for guide in guides %}
+    <div class="card mb-4" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <div class="card-header bg-primary text-white" style="font-size: 20px; padding: 15px;">
+            <h2 style="margin: 0; font-size: 18px;">{{ guide.title }}</h2>
+        </div>
+        <div class="card-body" style="padding: 20px;">
+            <!-- Display image -->
+            {% if guide.video_url %}
+            <div class="mb-3 text-center">
+                <div class="ratio ratio-16x9">
+                    <iframe src="https://www.youtube.com/embed/{{ guide.get_video_id }}" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen
+                            class="rounded"
+                            style="border: none;"></iframe>
+                </div>
+            </div>
+            {% elif guide.image %}
+            <div class="mb-3 text-center">
+                <img src="{{ guide.image.url }}" alt="{{ guide.title }}" 
+                     class="img-fluid rounded" 
+                     style="max-height: 300px; max-width: 100%; object-fit: cover; border: 1px solid #dee2e6;">
+            </div>
+            {% endif %}
+
+            <p><strong>CPU:</strong> {{ guide.cpu }}</p>
+            <p><strong>CPU Cooler:</strong> {{ guide.cpu_cooler }}</p>
+            <p><strong>Motherboard:</strong> {{ guide.motherboard }}</p>
+            <p><strong>Memory:</strong> {{ guide.memory }}</p>
+            <p><strong>Storage:</strong> {{ guide.storage }}</p>
+            <p><strong>GPU:</strong> {{ guide.gpu }}</p>
+            <p><strong>PSU:</strong> {{ guide.psu }}</p>
+            <p><strong>Case:</strong> {{ guide.case }}</p>
+        </div>
+        <div class="card-footer text-end" style="background-color: #f8f9fa; padding: 10px;">
+            {% if user.is_authenticated and user.is_superuser %}
+            <a href="{% url 'guide_update' guide.pk %}" class="btn btn-warning btn-sm">Edit</a>
+            <form action="{% url 'guide_delete' guide.pk %}" method="post" style="display: inline-block;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <div class="alert alert-info text-center" style="font-size: 18px; padding: 20px;">
+        No guides available.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Parts</h1>
+
+
+  {% for product_list in data.values %}
+    <!-- {% if product_list %} -->
+      <h2 class="mt-5">{{ product_type|title }}</h2>
+      <div class="row">
+        {% for product in product_list %}
+          <div class="col-md-4 mb-3">
+            <div class="card h-100">
+              <img src="{{ product.photo.url }}" class="card-img-top" alt="{{ product.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text"><strong>Warranty:</strong> {{ product.warranty }} years</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- build part start here -->
+<section>
+  <div class="container">
+    <div class="build text-center py-5">
+      <h1>Pick Parts. Build Your PC. <br> Compare and Share.</h1>
+      <p>We provide part selection, pricing, and compatibility guidance for <br> do-it-yourself computer builders.</p>
+      <a href="{% url 'cpu' %}" class="btn btn-lg btn-primary">Start Your Build</a>
+    </div>
+  </div>
+</section>
+<!-- build part end here -->
+
+<!-- guides part start here -->
+<section>
+<div class="guid">
+  <div class="container">
+    <div class="row gx-4">
+      <!-- Left Text Section -->
+      <div class="col-md-3 mb-4">
+        <h1 style="color: #fff;">Build Guides</h1>
+        <p style="color: #fff;">
+          Building your own PC and need ideas on where to get started?
+          Explore our build guides which cover systems for a variety of use-cases and budgets.
+        </p>
+        <a href="{% url 'guide_list' %}" class="btn btn-outline-light">View In Details</a>
+      </div>
+
+      <!-- Right Carousel Section -->
+      <div class="col-md-9">
+        <div id="guidesCarousel" class="carousel slide" data-bs-ride="carousel">
+          <!-- Carousel items -->
+          <div class="carousel-inner">
+            {% for guide in guides %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="row justify-content-center">
+                  <div class="col-md-6">
+                    <div class="card h-100 mb-3">
+                      {% if guide.image %}
+                        <img
+                          src="{{ guide.image.url }}"
+                          class="card-img-top"
+                          alt="{{ guide.title }}"
+                          style="max-height:200px; object-fit:cover;">
+                      {% endif %}
+                      <div class="card-body">
+                        <h5 class="card-title text-dark">{{ guide.title }}</h5>
+                        <p class="card-text text-dark"><strong>CPU:</strong> {{ guide.cpu|truncatechars:30 }}</p>
+                        <p class="card-text text-dark"><strong>GPU:</strong> {{ guide.gpu|truncatechars:30 }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+
+          <!-- Controls -->
+          <button class="carousel-control-prev" type="button" data-bs-target="#guidesCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#guidesCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+
+        <!-- Indicators -->
+        <div class="text-center mt-3">
+          <div class="carousel-indicators position-static mx-auto">
+            {% for guide in guides %}
+              <button
+                type="button"
+                data-bs-target="#guidesCarousel"
+                data-bs-slide-to="{{ forloop.counter0 }}"
+                {% if forloop.first %}class="active"{% endif %}
+                aria-label="Slide {{ forloop.counter }}"
+                style="width: 10px; height: 10px; border-radius: 50%; margin: 0 5px; background-color: rgba(255,255,255,0.5); border: none;">
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const carousel = document.getElementById('guidesCarousel');
+  carousel.addEventListener('slid.bs.carousel', function (event) {
+    const indicators = document.querySelectorAll('.carousel-indicators button');
+    indicators.forEach((indicator, index) => {
+      if (index === event.to) {
+        indicator.classList.add('active');
+        indicator.style.backgroundColor = 'white';
+      } else {
+        indicator.classList.remove('active');
+        indicator.style.backgroundColor = 'rgba(255,255,255,0.5)';
+      }
+    });
+  });
+});
+</script>
+
+{% endblock %}

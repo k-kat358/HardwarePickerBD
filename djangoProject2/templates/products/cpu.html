@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container mt-4 mb-4" style="padding-top: 0;">
+    <div class="row">
+        <!-- Filter Section -->
+        <div class="col-md-3">
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Other Components</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><a href="{% url 'gpu' %}" class="btn btn-primary m-2">View GPUs</a></td></tr>
+                            <tr><td><a href="{% url 'psu' %}" class="btn btn-primary m-2">View PSUs</a></td></tr>
+                            <tr><td><a href="{% url 'cpucooler' %}" class="btn btn-primary m-2">View CpuCoolers</a></td></tr>
+                            <tr><td><a href="{% url 'storage' %}" class="btn btn-primary m-2">View Storages</a></td></tr>
+                            <tr><td><a href="{% url 'ram' %}" class="btn btn-primary m-2">View RAMs</a></td></tr>
+                            <tr><td><a href="{% url 'case' %}" class="btn btn-primary m-2">View Cases</a></td></tr>
+                            <tr><td><a href="{% url 'mobo' %}" class="btn btn-primary m-2">View Motherboards</a></td></tr>
+                         
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Display Section -->
+        <div class="col-md-9">
+            <div class="row g-4">
+                {% for item in cpu %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm">
+                            <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">{{ item.name }}</h5>
+                                <p class="card-text text-muted">{{ item.shop }}</p>
+                                <p class="card-text">{{ item.price }}৳</p>
+                                <a href="{% url 'cpu_detail' item.id %}" class="btn btn-primary">View Details</a>
+                                <a class="btn btn-danger mx-2" type="button" href="{% url 'add_to_cart' 'CPU' item.id %}">Add to Cart</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

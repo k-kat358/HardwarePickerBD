@@ -1,0 +1,203 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+.navbar{
+    background-color: #000 !important;
+}
+.nav-item a{
+    color: #fff !important;
+}
+.build{
+    text-align: center;
+    padding: 30px 0;
+}
+.build h1{
+    font-weight: 700;
+}
+.build .btn{
+    background-color: #2c87c3;
+    color: white;
+    font-weight: 600;
+}
+
+
+.guid{
+    background-color: #545578;
+    padding: 45px;
+    margin: 30px 0;
+}
+.container h1{
+
+}
+.budgets{
+
+}
+.budgets h1{
+    color: white;
+    font-weight: 700;
+    font-size: 60px;
+}
+.budgets p{
+    color: white;
+    line-height: 30px;
+}
+.budgets .btn{
+    background-color: #2c87c3;
+    color: white;
+    font-weight: 600;
+}
+.pc{
+    background-color: white;
+    border-radius: 10px;
+    width: 270px;
+    margin: 0 10px;
+}
+.pc img{
+    height: 150px;
+    width: 130px;
+    margin-top: 20px;
+}
+.pc h5{
+    font-weight: 700;
+}
+.pc p{
+    font-size: 13px;
+}
+.pc span{
+    font-size: 14px;
+    font-weight: 300;
+    color: rgb(112, 112, 112);
+    margin-bottom: 20px;
+}
+.value{
+    display: flex;
+    justify-content: space-between;
+}
+.value p{
+    font-weight: 700;
+}
+.comment{
+
+}
+.comment h6{
+    
+}
+.comment h6 i{
+    
+}
+.pc h5 :hover .pc{
+    color: #2c87c3;
+}
+
+
+
+
+
+
+.complete{
+
+}
+.experience{
+
+}
+.experience h1{
+    font-weight: 700;
+}
+.experience p{
+    line-height: 30px;
+}
+.experience a{
+    
+}
+.experience .btn{
+    background-color: #2c87c3;
+    color: #fff;
+    font-weight: 600;
+    font-size: 20px;
+}
+.feature{
+    width: 256px;
+    margin: 0px 35px;
+    box-shadow: 1px 1px 12px 0px rgba(0,0,0,0.75);
+
+    
+
+}
+.feature img{
+    display: block;
+    height: 200px;
+    width: 200px;
+    margin-bottom: 20px;
+}
+.feature a{
+    /*text-decoration: none; */
+}
+.feature p{
+    font-size: 13px;
+}
+.feature h5{
+    
+}
+.feature span{
+    
+}
+.values{
+
+}
+.values p{
+    
+}
+.mark{
+    background-color: white;
+}
+.mark p{
+
+}
+.mark i{
+    
+}
+.value p{
+
+}
+.comment p{
+    
+}
+
+
+
+
+.foot{
+    background-color: #191b2a;
+}
+.details{
+    margin-top: 20px;
+    padding-top: 15px;
+    display: flex;
+    justify-content: space-around;
+}
+.name{
+
+}
+.name h6{
+    color: white;
+}
+.lastpart{
+    background-color: #191b2a;
+}
+.pro{
+
+}
+.pro h6{
+    color: white;
+}
+.pro p{
+    
+}
+.pro a{
+    /* text-decoration: none; */
+}
+.copy{
+    font-size: 12px;
+}
+

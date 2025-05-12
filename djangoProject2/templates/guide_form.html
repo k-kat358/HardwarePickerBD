@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5" style="max-width: 800px;">
+    <div class="card shadow-lg border-0" style="border-radius: 15px;">
+        <div class="card-header bg-primary text-white py-3" style="border-radius: 15px 15px 0 0;">
+            <h1 class="h4 mb-0 text-center">
+                <i class="bi bi-file-earmark-text me-2"></i>
+                {{ guide.title|default:"New Guide" }}
+            </h1>
+        </div>
+        
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Form Fields Grid -->
+                <div class="row g-4">
+                    {% for field in form %}
+                    <div class="col-12">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 mb-2 mb-md-0">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-bold">
+                                    {{ field.label }}
+                                    {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                                </label>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    {% if field.name == 'image' %}
+                                    <div class="file-input-wrapper">
+                                        {{ field }}
+                                        <div class="file-input-preview mt-2"></div>
+                                    </div>
+                                    {% else %}
+                                    {{ field }}
+                                    {% endif %}
+                                    
+                                    {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    
+                                    {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ error }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Add video preview after URL field -->
+                    {% if field.name == 'video_url' %}
+                    <div class="col-12">
+                        <div id="video-preview" class="mb-3"></div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-center gap-3 mt-5">
+                    <button type="submit" class="btn btn-success px-4 py-2">
+                        <i class="bi bi-save me-2"></i>Save Guide
+                    </button>
+                    <a href="{% url 'guide_list' %}" class="btn btn-outline-secondary px-4 py-2">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+
+    .video-url-input {
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6 !important;
+            padding: 10px 15px !important;
+            border-radius: 8px !important;
+        }
+    
+    .form-label {
+        min-width: 140px;
+        margin-bottom: 0;
+    }
+    
+    .form-control, .form-select {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    input[type="file"] {
+        padding: 12px;
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        background: white;
+    }
+    
+    .invalid-feedback {
+        font-size: 0.85em;
+        margin-top: 5px;
+    }
+    
+    .row.align-items-center {
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .row.align-items-center:last-child {
+        border-bottom: none;
+    }
+    
+    /* Video preview styling */
+    #video-preview iframe {
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput   = document.querySelector('#id_image');
+    const imagePreview = document.querySelector('.file-input-preview');
+    const videoUrlInput = document.querySelector('#id_video_url');
+    const videoPreview = document.querySelector('#video-preview');
+
+    // initialize preview if editing existing guide
+    if (videoUrlInput && videoUrlInput.value) {
+        updateVideoPreview(videoUrlInput.value);
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', function() {
+            if (this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    imagePreview.innerHTML = `
+                        <img src="${e.target.result}"
+                             class="img-fluid mt-2"
+                             style="max-height: 200px;">`;
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    if (videoUrlInput) {
+        videoUrlInput.addEventListener('input', function() {
+            updateVideoPreview(this.value);
+        });
+    }
+
+    function updateVideoPreview(url) {
+        const videoId = getYouTubeId(url);
+        videoPreview.innerHTML = videoId
+            ? `<div class="ratio ratio-16x9">
+                 <iframe src="https://www.youtube.com/embed/${videoId}"
+                         frameborder="0"
+                         allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                         allowfullscreen></iframe>
+               </div>`
+            : '';
+    }
+
+    function getYouTubeId(url) {
+        try {
+            const parsed = new URL(url);
+            if (parsed.hostname.includes('youtu.be')) {
+                return parsed.pathname.slice(1);
+            }
+            if (parsed.hostname.includes('youtube.com')) {
+                return parsed.searchParams.get('v');
+            }
+        } catch {}
+        return null;
+    }
+});
+</script>
+
+{% endblock %}
