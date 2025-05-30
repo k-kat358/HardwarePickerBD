@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import CartItem, Order, OrderItem
 from django.db.models import Sum
 from collections import defaultdict
+import re
 
 @login_required
 def order_list(request):
@@ -200,6 +201,7 @@ def case_detail(request, case_id):
 @login_required
 def view_cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
+    # Initialize component slots
     components = {
         'CPU': None,
         'MOBO': None,
@@ -212,94 +214,106 @@ def view_cart(request):
     }
     compatibility_issues = defaultdict(list)
 
-    # Collect components from cart
+    # Populate components dict
     for item in cart_items:
-        product = item.product_object
-        if product:
-            if item.product_type == 'CPU':
-                components['CPU'] = product
-            elif item.product_type == 'MOBO':
-                components['MOBO'] = product
-            elif item.product_type == 'RAM':
-                components['RAM'].append(product)
-            elif item.product_type == 'PSU':
-                components['PSU'] = product
-            elif item.product_type == 'CASE':
-                components['CASE'] = product
-            elif item.product_type == 'CPUCooler':
-                components['CPUCooler'] = product
-            elif item.product_type == 'Storage':
-                components['Storage'].append(product)
-            elif item.product_type == 'GPU':
-                components['GPU'] = product
+        prod = item.product_object
+        if not prod:
+            continue
+        if item.product_type in ['RAM', 'Storage']:
+            components[item.product_type].append(prod)
+        else:
+            components[item.product_type] = prod
 
-    # Compatibility checks
-    cpu = components['CPU']
-    mobo = components['MOBO']
-    psu = components['PSU']
-    case = components['CASE']
-    cooler = components['CPUCooler']
-    rams = components['RAM']
-    gpu = components['GPU']
-    storages = components['Storage']
+    cpu = components['CPU']; mobo = components['MOBO']; psu = components['PSU']
+    case = components['CASE']; cooler = components['CPUCooler']; rams = components['RAM']
+    gpu = components['GPU']; storages = components['Storage']
 
-    # CPU-Motherboard compatibility
+    def flag(ptype, pid, msg):
+        '''Attach a compatibility message to all cart_items matching product type & id.'''
+        for it in cart_items.filter(product_type=ptype, product_id=pid):
+            compatibility_issues[it.id].append(msg)
+
+    # Utility normalization and splitter
+    def norm(val): return val.strip().lower() if isinstance(val, str) else val
+    def split_multi(val):
+        if not isinstance(val, str):
+            return []
+        parts = re.split(r'[\\/,\s]+', val)
+        return [norm(p) for p in parts if p]
+
+    # 1. CPU <-> Motherboard socket/platform
     if cpu and mobo:
-        if cpu.platform != mobo.platform:
-            msg = f"CPU platform ({cpu.platform}) doesn't match Motherboard ({mobo.platform})"
-            for item in cart_items:
-                if item.product_type == 'CPU' and item.product_id == cpu.id:
-                    compatibility_issues[item.id].append(msg)
-                if item.product_type == 'MOBO' and item.product_id == mobo.id:
-                    compatibility_issues[item.id].append(msg)
+        mobo_platforms = split_multi(mobo.platform)
+        if norm(cpu.platform) not in mobo_platforms:
+            msg = f"CPU socket ({cpu.platform}) doesn't match Motherboard ({mobo.platform})"
+            flag('CPU', cpu.id, msg); flag('MOBO', mobo.id, msg)
 
-    # RAM-Motherboard compatibility
+    # 2. RAM <-> Motherboard type & capacity
     if mobo and rams:
+        total_ram = sum(r.ram_capacity for r in rams)
+        mobo_ram_types = split_multi(mobo.ram_type)
         for ram in rams:
-            if ram.ram_type != mobo.ram_type:
-                msg = f"RAM type ({ram.ram_type}) not supported by motherboard"
-                for item in cart_items.filter(product_type='RAM', product_id=ram.id):
-                    compatibility_issues[item.id].append(msg)
-
-        total_ram = sum(ram.ram_capacity for ram in rams)
+            if norm(ram.ram_type) not in mobo_ram_types:
+                msg = f"RAM type ({ram.ram_type}) not supported by motherboard ({mobo.ram_type})"
+                flag('RAM', ram.id, msg)
         if total_ram > mobo.ram_capacity:
-            msg = f"Total RAM ({total_ram}GB) exceeds motherboard limit ({mobo.ram_capacity}GB)"
-            for item in cart_items.filter(product_type='RAM'):
-                compatibility_issues[item.id].append(msg)
+            msg = f"Total RAM ({total_ram}GB) exceeds motherboard max ({mobo.ram_capacity}GB)"
+            for ram in rams: flag('RAM', ram.id, msg)
 
-    # PSU Wattage check
+    # 3. Storage <-> M.2 slots
+    if mobo and storages:
+        nvme_count = sum(1 for s in storages if norm(s.interface) == 'nvme')
+        if hasattr(mobo, 'm2_slots') and nvme_count > mobo.m2_slots:
+            msg = f"NVMe drives ({nvme_count}) exceed motherboard M.2 slots ({mobo.m2_slots})"
+            for s in storages: flag('Storage', s.id, msg)
+
+    # 4. PSU power budgeting
     total_power = sum([
         cpu.power if cpu else 0,
         mobo.power if mobo else 0,
-        sum(ram.power for ram in rams),
-        sum(storage.power for storage in storages),
-        gpu.power if gpu else 0
+        sum(r.power for r in rams),
+        sum(s.power for s in storages),
+        gpu.power if gpu else 0,
     ])
-
     if psu and psu.capacity < total_power:
-        msg = f"PSU capacity ({psu.capacity}W) insufficient for system ({total_power}W)"
-        for item in cart_items.filter(product_type='PSU'):
-            compatibility_issues[item.id].append(msg)
+        msg = f"PSU capacity ({psu.capacity}W) insufficient for estimated draw ({total_power}W)"
+        flag('PSU', psu.id, msg)
 
-    # Case-Motherboard compatibility
-    if case and mobo:
-        if mobo.mobo_form_factor not in case.mobo_form_factor:
+    # 5. Case <-> Motherboard form factor
+    if case and mobo and hasattr(case, 'mobo_form_factor'):
+        supported = split_multi(case.mobo_form_factor)
+        if norm(mobo.mobo_form_factor) not in supported:
             msg = f"Case doesn't support {mobo.mobo_form_factor} motherboards"
-            for item in cart_items.filter(product_type='CASE'):
-                compatibility_issues[item.id].append(msg)
+            flag('CASE', case.id, msg)
 
-    # Cooler-CPU compatibility
+    # 6. GPU <-> Case clearance
+    if case and gpu and hasattr(case, 'max_gpu_length') and hasattr(gpu, 'length'):
+        if gpu.length > case.max_gpu_length:
+            msg = f"GPU length ({gpu.length}mm) exceeds case max ({case.max_gpu_length}mm)"
+            flag('GPU', gpu.id, msg)
+            flag('CASE', case.id, msg)
+
+    # 7. Cooler <-> Case height & CPU socket
     if cooler and cpu:
-        if cpu.platform not in cooler.platform.split(', '):
-            msg = f"Cooler not compatible with {cpu.platform} platform"
-            for item in cart_items.filter(product_type='CPUCooler'):
-                compatibility_issues[item.id].append(msg)
+        sup = split_multi(cooler.platform)
+        if norm(cpu.platform) not in sup:
+            msg = f"Cooler not compatible with {cpu.platform} socket"
+            flag('CPUCooler', cooler.id, msg)
+        if case and hasattr(case, 'max_cooler_height') and hasattr(cooler, 'height'):
+            if cooler.height > case.max_cooler_height:
+                msg = f"Cooler height ({cooler.height}mm) exceeds case limit ({case.max_cooler_height}mm)"
+                flag('CPUCooler', cooler.id, msg); flag('CASE', case.id, msg)
 
+    # 8. PSU size <-> Case PSU bay
+    if psu and case and hasattr(psu, 'length') and hasattr(case, 'max_psu_length'):
+        if psu.length > case.max_psu_length:
+            msg = f"PSU length ({psu.length}mm) exceeds case PSU bay limit ({case.max_psu_length}mm)"
+            flag('PSU', psu.id, msg); flag('CASE', case.id, msg)
+
+    # Calculate total
     total_amount = sum(item.total_price for item in cart_items)
-
-    context = {
+    return render(request, 'cart.html', {
         'cart_items': cart_items,
         'total_amount': total_amount,
         'compatibility_issues': dict(compatibility_issues),
-    }
-    return render(request, "cart.html", context)
+    })
