@@ -32,6 +32,9 @@ class Guides(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        verbose_name_plural = "View Guides"
+
 class GuidesImages(models.Model):
     guide = models.ForeignKey(Guides, on_delete=models.CASCADE, related_name='images')
     component = models.CharField(max_length=50, choices=[
@@ -48,3 +51,6 @@ class GuidesImages(models.Model):
 
     def __str__(self):
         return f"{self.component} Image for {self.guide.title}"
+
+
+
