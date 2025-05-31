@@ -7,6 +7,8 @@ from guides.models import Guides
 from products.models import CPU, MOBO, CPUCooler, RAM, Storage, GPU, PSU, CASE
 from userprofile.models import UserProfile
 from datetime import datetime
+from buildhub.models import BlogPost
+from django.db.models import Count
 
 def base(request):
     return render(request,'base.html')
@@ -14,7 +16,13 @@ def base(request):
 
 def home(request):
     guides = Guides.objects.all()
-    return render(request, 'components/home.html', {'guides': guides})
+    top_blogs = BlogPost.objects.annotate(like_count=Count('likes')).order_by('-like_count')[:3]
+
+    return render(request, 'components/home.html', {
+        'guides': guides,
+        'top_blogs': top_blogs,
+    })
+
 
 def builder(request):
     return render(request, 'components/builder.html')
