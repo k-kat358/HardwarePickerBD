@@ -5,7 +5,8 @@ from django.shortcuts import redirect,render
 from django.contrib.auth.models import User
 from guides.models import Guides
 from products.models import CPU, MOBO, CPUCooler, RAM, Storage, GPU, PSU, CASE
-
+from userprofile.models import UserProfile
+from datetime import datetime
 
 def base(request):
     return render(request,'base.html')
@@ -29,7 +30,7 @@ def register(request):
         last_name = request.POST.get('last_name')
         phone_number = request.POST.get('phone_number')
         address = request.POST.get('address')
-        date_of_birth = request.POST.get('date_of_birth')
+        date_of_birth_str = request.POST.get('date_of_birth')
         bio = request.POST.get('bio')
 
         if not uname or not email or not pw1 or not pw2:
@@ -49,6 +50,7 @@ def register(request):
             return render(request, 'registration/register.html')
 
         try:
+            # Create the User
             my_user = User.objects.create_user(
                 username=uname,
                 email=email,
@@ -56,21 +58,25 @@ def register(request):
                 first_name=first_name,
                 last_name=last_name
             )
-            my_user.save()
 
+            # Convert DOB
+            date_of_birth = None
+            if date_of_birth_str:
+                try:
+                    date_of_birth = datetime.strptime(date_of_birth_str, "%Y-%m-%d").date()
+                except ValueError:
+                    messages.error(request, "Invalid date format. Use YYYY-MM-DD.")
+                    return render(request, 'registration/register.html')
 
-            user_profile, created = UserProfile.objects.get_or_create(
-                user=my_user,
-                defaults={
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "email": email,
-                    "phone_number": phone_number,
-                    "address": address,
-                    "date_of_birth": date_of_birth,
-                    "bio": bio
-                }
-            )
+            # Update the auto-created UserProfile
+            profile = my_user.userprofile
+            profile.first_name = first_name
+            profile.last_name = last_name
+            profile.phone_number = phone_number
+            profile.address = address
+            profile.date_of_birth = date_of_birth
+            profile.bio = bio
+            profile.save()
 
             messages.success(request, "Account created successfully. You can now log in.")
             return redirect('login')
