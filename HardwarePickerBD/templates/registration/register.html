@@ -1,67 +1,119 @@
 {% extends "base.html" %}
 {% block content %}
 <section style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: calc(100vh - 120px); background-color: #f8f9fa;">
-    <div style="max-width: 500px; padding: 16px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px; background-color: white;">
-        <h3 style="text-align: center; margin-bottom: 16px;">Sign Up</h3>
-        <form style="display: flex; flex-direction: column; gap: 16px;" method="post" action="{% url 'register' %}">
+    <div style="max-width: 700px; padding: 32px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); border-radius: 10px; background-color: white;">
+        <h2 style="text-align: center; margin-bottom: 24px; font-size: 28px; color: #333;">Sign Up</h2>
+
+        {% if messages %}
+            <div style="margin-bottom: 20px;">
+                {% for message in messages %}
+                    <div style="color: #d32f2f; font-size: 16px; padding: 10px; background: #ffebee; border-radius: 4px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'register' %}" style="display: flex; flex-direction: column; gap: 20px; font-size: 17px;">
             {% csrf_token %}
 
-            <!-- Username Field -->
-            <div>
-                <label for="username" style="display: block; font-weight: bold;">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter Username" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;" required>
+            <!-- Two-column wrapper -->
+            <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <div style="flex: 1 1 48%;">
+                    <label for="username" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter Username" required
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="email" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter Email" required
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="password" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Password</label>
+                    <input type="password" id="password" name="password1" placeholder="Enter Password" required
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="confirm_password" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="password2" placeholder="Confirm Password" required
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="first_name" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">First Name</label>
+                    <input type="text" id="first_name" name="first_name" placeholder="Enter First Name"
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="last_name" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name"
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="phone_number" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Phone Number</label>
+                    <input type="text" id="phone_number" name="phone_number" placeholder="11-digit number only"
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="address" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Address</label>
+                    <input type="text" id="address" name="address" placeholder="Enter Address"
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 48%;">
+                    <label for="date_of_birth" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Date of Birth (You must be 10 years or older)</label>
+                    <input type="date" id="date_of_birth" name="date_of_birth"
+                           style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+
+                <div style="flex: 1 1 100%;">
+                    <label for="bio" style="display: block; font-weight: bold; margin-bottom: 8px; font-size: 18px;">Bio</label>
+                    <textarea id="bio" name="bio" placeholder="Tell us about yourself"
+                              style="width: 100%; padding: 14px; font-size: 17px; border: 1px solid #ddd; border-radius: 6px;"></textarea>
+                </div>
             </div>
 
-            <!-- Email Field -->
-            <div>
-                <label for="email" style="display: block; font-weight: bold;">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter Email" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;" required>
-            </div>
+            <button type="submit"
+                    style="padding: 14px 20px; font-size: 18px; border: none; border-radius: 6px; background-color: #1976d2; color: white; font-weight: bold; cursor: pointer; margin-top: 10px;">
+                Sign Up
+            </button>
 
-            <!-- Password Fields -->
-            <div>
-                <label for="password" style="display: block; font-weight: bold;">Password</label>
-                <input type="password" id="password" name="password1" placeholder="Enter Password" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;" required>
-            </div>
-            <div>
-                <label for="confirm_password" style="display: block; font-weight: bold;">Confirm Password</label>
-                <input type="password" id="confirm_password" name="password2" placeholder="Confirm Password" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;" required>
-            </div>
-
-            <!-- Other Fields -->
-            <div>
-                <label for="first_name" style="display: block; font-weight: bold;">First Name</label>
-                <input type="text" id="first_name" name="first_name" placeholder="Enter First Name" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
-            </div>
-            <div>
-                <label for="last_name" style="display: block; font-weight: bold;">Last Name</label>
-                <input type="text" id="last_name" name="last_name" placeholder="Enter Last Name" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
-            </div>
-            <div>
-                <label for="phone_number" style="display: block; font-weight: bold;">Phone Number</label>
-                <input type="text" id="phone_number" name="phone_number" placeholder="Enter Phone Number" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
-            </div>
-            <div>
-                <label for="address" style="display: block; font-weight: bold;">Address</label>
-                <input type="text" id="address" name="address" placeholder="Enter Address" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
-            </div>
-            <div>
-                <label for="date_of_birth" style="display: block; font-weight: bold;">Date of Birth</label>
-                <input type="date" id="date_of_birth" name="date_of_birth" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;">
-            </div>
-            <div>
-                <label for="bio" style="display: block; font-weight: bold;">Bio</label>
-                <textarea id="bio" name="bio" placeholder="Tell us about yourself" style="width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px;"></textarea>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" style="padding: 10px 16px; border: none; border-radius: 4px; background-color: #007bff; color: white; font-weight: bold;">Sign Up</button>
-
-            <!-- Login Link -->
-            <div style="text-align: center; margin-top: 16px;">
-                <a href="{% url 'login' %}" style="text-decoration: none; color: #007bff;">I already have an account</a>
+            <div style="text-align: center; margin-top: 20px; font-size: 17px;">
+                <a href="{% url 'login' %}" style="text-decoration: none; color: #1976d2; font-weight: 500;">
+                    I already have an account
+                </a>
             </div>
         </form>
     </div>
 </section>
+
+<!-- JavaScript: Emoji + Phone Filter -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const blockEmoji = text => text.replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F64F}\u{2600}-\u{27BF}]/gu, "");
+
+    ['first_name', 'last_name', 'username'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener("input", function () {
+                this.value = blockEmoji(this.value);
+            });
+        }
+    });
+
+    const phoneInput = document.getElementById("phone_number");
+    if (phoneInput) {
+        phoneInput.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, "").slice(0, 11);
+        });
+    }
+});
+</script>
 {% endblock %}
