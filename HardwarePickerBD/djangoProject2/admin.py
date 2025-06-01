@@ -26,8 +26,8 @@ class CustomUserAdmin(UserAdmin):
 
 
 class MyAdminSite(AdminSite):
-    site_header = _("My Store Admin")
-    site_title = _("Store Admin")
+    site_header = _("HardwarePickerBD")
+    site_title = _("Site Admin")
     index_title = _("Dashboard")
 
     def get_app_list(self, request, app_label=None):
