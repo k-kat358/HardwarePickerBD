@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+</head>
+<body style="margin: 0; padding: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(to right, #0062ff, #00c6ff); font-family: Arial, sans-serif;">
+    
+    <div style="background: white; border-radius: 10px; padding: 40px; width: 100%; max-width: 900px; display: flex; margin: 20px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);">
+        
+        <!-- Left side with envelope illustration -->
+        <div style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px;">
+            <svg style="width: 100px; height: auto;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 8V16C22 17.1046 21.1046 18 20 18H4C2.89543 18 2 17.1046 2 16V8M22 8L12 13L2 8M22 8L19 5H5L2 8" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <!-- Right side with form -->
+        <div style="flex: 1; padding: 20px;">
+            <h2 style="color: #333; margin-bottom: 30px; font-size: 24px;">Get in touch</h2>
+            <form>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" placeholder="Name" style="width: 100%; padding: 12px; border: none; background: #f0f0f0; border-radius: 25px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <input type="email" placeholder="Email" style="width: 100%; padding: 12px; border: none; background: #f0f0f0; border-radius: 25px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <input type="text" placeholder="Subject" style="width: 100%; padding: 12px; border: none; background: #f0f0f0; border-radius: 25px; font-size: 14px; box-sizing: border-box;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <textarea placeholder="Message" style="width: 100%; height: 120px; padding: 12px; border: none; background: #f0f0f0; border-radius: 25px; font-size: 14px; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+                
+                <button type="submit" style="background: #4CAF50; color: white; padding: 12px 30px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; display: inline-flex; align-items: center;">
+                    Send Email →
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

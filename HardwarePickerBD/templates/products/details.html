@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 20px;">
+    <h1 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">{{ object.name }}</h1>
+
+    <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+        <!-- Image Section -->
+        <div style="flex: 1 1 400px; min-width: 300px; max-width: 600px;">
+            {% if object.photo %}
+            <div style="position: relative; padding-top: 75%; background: #f8f9fa; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); overflow: hidden;">
+                <img src="{{ object.photo.url }}" alt="{{ object.name }}" 
+                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; padding: 20px;">
+            </div>
+            {% endif %}
+            
+            <!-- Price and Add to Cart -->
+            <div style="margin-top: 30px; text-align: center; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+                {% if object.price %}
+                <h2 style="color: #27ae60; font-size: 2rem; margin: 0 0 20px 0;">
+                    {{ object.price }}৳
+                </h2>
+                {% endif %}
+                <a href="{% url 'add_to_cart' object.product_type object.id %}" 
+                   class="btn btn-primary" 
+                   style="padding: 10px 14px; font-size: 1.1rem; width: 100%; max-width: 130px; margin: 0 auto;">
+                    Add to Cart
+                </a>
+            </div>
+        </div>
+
+        <!-- Specifications Section -->
+        <div style="flex: 2 1 600px; min-width: 300px;">
+            <div style="background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+                <h2 style="color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-bottom: 25px;">
+                    Specifications
+                </h2>
+
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    {% for field_name, value in object.get_field_values %}
+                    <div class="spec-item">
+                        <span class="spec-label">{{ field_name }}</span>
+                        <span class="spec-value">
+                            {% if field_name == 'Connector And Ports' %}
+                                <div style="text-align: left;">
+                                    {{ value|linebreaks }}
+                                </div>
+                            {% elif 'clock' in field_name.lower or 'speed' in field_name.lower %}
+                                {{ value }} GHz
+                            {% elif 'capacity' in field_name.lower or 'storage' in field_name.lower %}
+                                {{ value }} GB
+                            {% elif 'power' in field_name.lower or 'wattage' in field_name.lower %}
+                                {{ value }} W
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'cpu' %}" class="btn btn-outline-primary" 
+           style="padding: 10px 30px; font-size: 1rem;">
+            Back to Product List
+        </a>
+    </div>
+</div>
+
+<style>
+    .spec-item {
+        padding: 18px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .spec-label {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 1.05rem;
+        margin-bottom: 5px;
+    }
+
+    .spec-value {
+        color: #7f8c8d;
+        text-align: left;
+        word-break: break-word;
+        line-height: 1.5;
+        font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 16px;
+        }
+        
+        div[style*="padding-top: 75%"] {
+            padding-top: 100%;
+        }
+
+        .spec-item {
+            padding: 12px;
+        }
+
+        .spec-label {
+            font-size: 0.9rem;
+        }
+
+        .spec-value {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}

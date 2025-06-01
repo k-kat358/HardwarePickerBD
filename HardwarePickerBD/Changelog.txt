@@ -1,0 +1,22 @@
+Changelog 1 : Samir (1/12/24)
+1.Edited admin.py of products > save as new feature added,for easier data entry
+2.Added new attribute > "shop" to all models
+3.Updated inline css for products > title center aligned, shop name added in cards
+4.Django admin panel now shows shop name as well for easy future editing, sorted by product name then shop name 
+5.Adjusted inline css files further > filter by box is now aligned properly, product cards now have even spacings 
+				    above and below
+6.Updated details.html in templates>products (for all models). Now shows units in taka and other small adjustments
+next >> filter by functional korbo
+
+Changelog 2 : Sadia (1/12/24)
+1. Added products to the database
+
+Changelog 3 : Samir (3/12/24)
+1. Page is now 90% functional, one card row of homepage still needs updating. Existing error - form of guides page(pic)
+
+Changelog 4 : Samir (3/12/24)
+1. cleaned up the directory a bit
+
+Changelog 5 : Samir (3/12/24)
+1. Updated homepage
+
