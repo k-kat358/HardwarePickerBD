@@ -3,7 +3,7 @@ from .models import CPU,MOBO,CPUCooler,RAM,Storage,GPU,PSU,CASE
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import CartItem, Order, OrderItem
-from django.db.models import Sum
+from django.db.models import Sum, F
 from collections import defaultdict
 import re
 
@@ -279,19 +279,31 @@ def view_cart(request):
         msg = f"PSU capacity ({psu.capacity}W) insufficient for estimated draw ({total_power}W)"
         flag('PSU', psu.id, msg)
 
-    # 5. Case <-> Motherboard form factor
-    if case and mobo and hasattr(case, 'mobo_form_factor'):
-        supported = split_multi(case.mobo_form_factor)
-        if norm(mobo.mobo_form_factor) not in supported:
-            msg = f"Case doesn't support {mobo.mobo_form_factor} motherboards"
-            flag('CASE', case.id, msg)
+    # # 5. Case <-> Motherboard form factor
+    # if case and mobo and hasattr(case, 'mobo_form_factor'):
+    #     supported = split_multi(case.mobo_form_factor)
+    #     if norm(mobo.mobo_form_factor) not in supported:
+    #         msg = f"Case doesn't support {mobo.mobo_form_factor} motherboards"
+    #         flag('CASE', case.id, msg)
 
     # 6. GPU <-> Case clearance
-    if case and gpu and hasattr(case, 'max_gpu_length') and hasattr(gpu, 'length'):
-        if gpu.length > case.max_gpu_length:
-            msg = f"GPU length ({gpu.length}mm) exceeds case max ({case.max_gpu_length}mm)"
-            flag('GPU', gpu.id, msg)
-            flag('CASE', case.id, msg)
+    if case and gpu and hasattr(case, 'gpu_and_cooler_clearance') and hasattr(gpu, 'dimension_weight'):
+        try:
+            # Extract GPU length from string like "357.6 x 149.3 x 70.1mm"
+            gpu_dimensions = gpu.dimension_weight.lower().replace('mm', '').strip()
+            gpu_length_str = gpu_dimensions.split('x')[0].strip()
+            gpu_length = float(gpu_length_str)
+
+            # Extract Case GPU clearance from string like "350mm,160mm"
+            clearance_parts = case.gpu_and_cooler_clearance.lower().replace('mm', '').split(',')
+            case_gpu_clearance = float(clearance_parts[0].strip())
+
+            if gpu_length > case_gpu_clearance:
+                msg = f"GPU length ({gpu_length}mm) exceeds case max clearance ({case_gpu_clearance}mm)"
+                flag('GPU', gpu.id, msg)
+                flag('CASE', case.id, msg)
+        except Exception as e:
+            print(f"Compatibility check failed: {e}")
 
     # 7. Cooler <-> Case height & CPU socket
     if cooler and cpu:
@@ -304,11 +316,14 @@ def view_cart(request):
                 msg = f"Cooler height ({cooler.height}mm) exceeds case limit ({case.max_cooler_height}mm)"
                 flag('CPUCooler', cooler.id, msg); flag('CASE', case.id, msg)
 
-    # 8. PSU size <-> Case PSU bay
-    if psu and case and hasattr(psu, 'length') and hasattr(case, 'max_psu_length'):
-        if psu.length > case.max_psu_length:
-            msg = f"PSU length ({psu.length}mm) exceeds case PSU bay limit ({case.max_psu_length}mm)"
-            flag('PSU', psu.id, msg); flag('CASE', case.id, msg)
+    # # 8. PSU size <-> Case PSU bay
+    # if psu and case and hasattr(psu, 'length') and hasattr(case, 'max_psu_length'):
+    #     if psu.length > case.max_psu_length:
+    #         msg = f"PSU length ({psu.length}mm) exceeds case PSU bay limit ({case.max_psu_length}mm)"
+    #         flag('PSU', psu.id, msg); flag('CASE', case.id, msg)
+
+    # 9. liquid Cooler radiator <-> Case fan
+    #coming soon once the model fields are more organized
 
     # Calculate total
     total_amount = sum(item.total_price for item in cart_items)
@@ -316,4 +331,156 @@ def view_cart(request):
         'cart_items': cart_items,
         'total_amount': total_amount,
         'compatibility_issues': dict(compatibility_issues),
+    })
+
+
+def cpu(request):
+    sort_by = request.GET.get('sort', 'default')
+    cpus = CPU.objects.all()
+
+    if sort_by == 'price_low':
+        cpus = cpus.order_by('price')
+    elif sort_by == 'price_high':
+        cpus = cpus.order_by('-price')
+    elif sort_by == 'name_asc':
+        cpus = cpus.order_by('name')
+    elif sort_by == 'name_desc':
+        cpus = cpus.order_by('-name')
+
+    return render(request, 'products/cpu.html', {
+        'cpu': cpus,
+        'current_sort': sort_by
+    })
+
+
+def mobo(request):
+    sort_by = request.GET.get('sort', 'default')
+    mobos = MOBO.objects.all()
+
+    if sort_by == 'price_low':
+        mobos = mobos.order_by('price')
+    elif sort_by == 'price_high':
+        mobos = mobos.order_by('-price')
+    elif sort_by == 'name_asc':
+        mobos = mobos.order_by('name')
+    elif sort_by == 'name_desc':
+        mobos = mobos.order_by('-name')
+
+    return render(request, 'products/mobo.html', {
+        'mobo': mobos,
+        'current_sort': sort_by
+    })
+
+
+def cpucooler(request):
+    sort_by = request.GET.get('sort', 'default')
+    coolers = CPUCooler.objects.all()
+
+    if sort_by == 'price_low':
+        coolers = coolers.order_by('price')
+    elif sort_by == 'price_high':
+        coolers = coolers.order_by('-price')
+    elif sort_by == 'name_asc':
+        coolers = coolers.order_by('name')
+    elif sort_by == 'name_desc':
+        coolers = coolers.order_by('-name')
+
+    return render(request, 'products/cpucooler.html', {
+        'cpucooler': coolers,
+        'current_sort': sort_by
+    })
+
+
+def ram(request):
+    sort_by = request.GET.get('sort', 'default')
+    rams = RAM.objects.all()
+
+    if sort_by == 'price_low':
+        rams = rams.order_by('price')
+    elif sort_by == 'price_high':
+        rams = rams.order_by('-price')
+    elif sort_by == 'name_asc':
+        rams = rams.order_by('name')
+    elif sort_by == 'name_desc':
+        rams = rams.order_by('-name')
+
+    return render(request, 'products/ram.html', {
+        'ram': rams,
+        'current_sort': sort_by
+    })
+
+
+def storage(request):
+    sort_by = request.GET.get('sort', 'default')
+    storages = Storage.objects.all()
+
+    if sort_by == 'price_low':
+        storages = storages.order_by('price')
+    elif sort_by == 'price_high':
+        storages = storages.order_by('-price')
+    elif sort_by == 'name_asc':
+        storages = storages.order_by('name')
+    elif sort_by == 'name_desc':
+        storages = storages.order_by('-name')
+
+    return render(request, 'products/storage.html', {
+        'storage': storages,
+        'current_sort': sort_by
+    })
+
+
+def gpu(request):
+    sort_by = request.GET.get('sort', 'default')
+    gpus = GPU.objects.all()
+
+    if sort_by == 'price_low':
+        gpus = gpus.order_by('price')
+    elif sort_by == 'price_high':
+        gpus = gpus.order_by('-price')
+    elif sort_by == 'name_asc':
+        gpus = gpus.order_by('name')
+    elif sort_by == 'name_desc':
+        gpus = gpus.order_by('-name')
+
+    return render(request, 'products/gpu.html', {
+        'gpu': gpus,
+        'current_sort': sort_by
+    })
+
+
+def case(request):
+    sort_by = request.GET.get('sort', 'default')
+    cases = CASE.objects.all()
+
+    if sort_by == 'price_low':
+        cases = cases.order_by('price')
+    elif sort_by == 'price_high':
+        cases = cases.order_by('-price')
+    elif sort_by == 'name_asc':
+        cases = cases.order_by('name')
+    elif sort_by == 'name_desc':
+        cases = cases.order_by('-name')
+
+    return render(request, 'products/case.html', {
+        'case': cases,
+        'current_sort': sort_by
+    })
+
+
+def psu(request):
+    sort_by = request.GET.get('sort', 'default')
+    psus = PSU.objects.all()
+
+    if sort_by == 'price_low':
+        psus = psus.order_by('price')
+    elif sort_by == 'price_high':
+        psus = psus.order_by('-price')
+    elif sort_by == 'name_asc':
+        psus = psus.order_by('name')
+    elif sort_by == 'name_desc':
+        psus = psus.order_by('-name')
+
+    return render(request, 'products/psu.html', {
+        'psu': psus,
+        'current_sort': sort_by
     })

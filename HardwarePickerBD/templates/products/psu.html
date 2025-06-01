@@ -4,7 +4,7 @@
 
 <div class="container mt-4 mb-4" style="padding-top: 0;">
     <div class="row">
-    <!-- Filter Section -->
+        <!-- Filter Section -->
         <div class="col-md-3">
             <div class="table-container">
                 <div class="table-responsive">
@@ -22,15 +22,40 @@
                             <tr><td><a href="{% url 'storage' %}" class="btn btn-primary m-2">View Storages</a></td></tr>
                             <tr><td><a href="{% url 'ram' %}" class="btn btn-primary m-2">View RAMs</a></td></tr>
                             <tr><td><a href="{% url 'case' %}" class="btn btn-primary m-2">View Cases</a></td></tr>
-                        
-                         
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
         <!-- Product Display Section -->
         <div class="col-md-9">
+            <!-- Sorting Controls -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>PSUs</h2>
+                <div class="sort-dropdown">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if current_sort == 'price_low' %}Price: Low to High
+                            {% elif current_sort == 'price_high' %}Price: High to Low
+                            {% elif current_sort == 'name_asc' %}Name: A to Z
+                            {% elif current_sort == 'name_desc' %}Name: Z to A
+                            {% else %}Sort By
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item {% if current_sort == 'default' %}active{% endif %}" href="?sort=default">Default</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item {% if current_sort == 'price_low' %}active{% endif %}" href="?sort=price_low">Price: Low to High</a></li>
+                            <li><a class="dropdown-item {% if current_sort == 'price_high' %}active{% endif %}" href="?sort=price_high">Price: High to Low</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item {% if current_sort == 'name_asc' %}active{% endif %}" href="?sort=name_asc">Name: A to Z</a></li>
+                            <li><a class="dropdown-item {% if current_sort == 'name_desc' %}active{% endif %}" href="?sort=name_desc">Name: Z to A</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <div class="row g-4">
                 {% for item in psu %}
                     <div class="col-md-6 col-lg-4">
@@ -45,11 +70,13 @@
                             </div>
                         </div>
                     </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">No PSUs found</div>
+                    </div>
                 {% endfor %}
             </div>
         </div>
-
-        
     </div>
 </div>
 
