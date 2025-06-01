@@ -26,7 +26,7 @@ CSRF_TRUSTED_ORIGINS = ["https://hardwarepickerbd.onrender.com"]
 SECRET_KEY = 'django-insecure-#g%k2=mo2$yadslb%(*ht9g=gs*z##uep5z=jx+g^pm^7s*ipt'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
