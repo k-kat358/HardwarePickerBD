@@ -12,8 +12,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from django.conf.global_settings import CSRF_TRUSTED_ORIGINS
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+CSRF_TRUSTED_ORIGINS = ["https://hardwarepickerbd.onrender.com"]
 
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +28,7 @@ SECRET_KEY = 'django-insecure-#g%k2=mo2$yadslb%(*ht9g=gs*z##uep5z=jx+g^pm^7s*ipt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['hardwarepickerbd.onrender.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
