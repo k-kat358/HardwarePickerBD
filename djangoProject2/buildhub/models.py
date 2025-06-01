@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class BlogPost(models.Model):
@@ -8,6 +9,7 @@ class BlogPost(models.Model):
     content = models.TextField()
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.title

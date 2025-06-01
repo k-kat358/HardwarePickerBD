@@ -26,7 +26,8 @@
                 <div>
                     <span class="text-muted">
                         By <strong class="text-primary">{{ blog.author.username }}</strong> | 
-                        <small>{{ blog.created|date:"M d, Y H:i" }}</small>
+                        <small>Posted: {{ blog.created|date:"F j, Y H:i" }}</small><br>
+                        <small>Last Edited: {{ blog.updated|date:"F j, Y H:i" }}</small>
                     </span>
                 </div>
                 

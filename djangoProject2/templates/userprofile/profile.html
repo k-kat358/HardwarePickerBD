@@ -15,8 +15,8 @@
             <!-- User Information -->
             <div class="mb-3">
                 <p><strong>Full Name:</strong> {% if user.userprofile.first_name and user.userprofile.last_name %}{{ user.userprofile.first_name }} {{ user.userprofile.last_name }}{% else %}Not available{% endif %}</p>
-               
-
+                <p><strong>Email:</strong> {{ user.email }}</p>
+            
                 {% if user.userprofile.phone_number %}
                     <p><strong>Phone Number:</strong> {{ user.userprofile.phone_number }}</p>
                 {% endif %}
