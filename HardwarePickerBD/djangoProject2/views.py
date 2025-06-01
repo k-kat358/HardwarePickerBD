@@ -66,17 +66,14 @@ def register(request):
         date_of_birth_str = request.POST.get('date_of_birth')
         bio = request.POST.get('bio')
 
-        # Required fields check
         if not uname or not email or not pw1 or not pw2:
             messages.error(request, "All required fields must be filled.")
             return render(request, 'registration/register.html')
 
-        # Password match
         if pw1 != pw2:
             messages.error(request, "Passwords do not match.")
             return render(request, 'registration/register.html')
 
-        # Username/email uniqueness
         if User.objects.filter(username=uname).exists():
             messages.error(request, "Username already taken.")
             return render(request, 'registration/register.html')
@@ -84,7 +81,6 @@ def register(request):
             messages.error(request, "Email already registered.")
             return render(request, 'registration/register.html')
 
-        # Format validations
         if not is_valid_email(email):
             messages.error(request, "Invalid email format.")
             return render(request, 'registration/register.html')
@@ -101,7 +97,6 @@ def register(request):
             messages.error(request, "Phone number must be 11 digits and numeric.")
             return render(request, 'registration/register.html')
 
-        # Date of Birth and age check
         date_of_birth = None
         if date_of_birth_str:
             try:
@@ -113,7 +108,6 @@ def register(request):
                 messages.error(request, "Invalid date format. Use YYYY-MM-DD.")
                 return render(request, 'registration/register.html')
 
-        # Create user
         try:
             my_user = User.objects.create_user(
                 username=uname,

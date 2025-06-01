@@ -18,10 +18,8 @@ class Guides(models.Model):
         """Extract YouTube video ID from URL"""
         if self.video_url:
             parsed_url = urlparse(self.video_url)
-            # Handle youtu.be links
             if parsed_url.hostname in ['youtu.be', 'www.youtu.be']:
                 return parsed_url.path[1:]
-            # Handle youtube.com links
             if parsed_url.hostname in ['youtube.com', 'www.youtube.com']:
                 if parsed_url.path == '/watch':
                     return parse_qs(parsed_url.query).get('v', [None])[0]
@@ -51,6 +49,3 @@ class GuidesImages(models.Model):
 
     def __str__(self):
         return f"{self.component} Image for {self.guide.title}"
-
-
-

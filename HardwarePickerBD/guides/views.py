@@ -12,7 +12,7 @@ def guide_create(request):
     if request.method == 'POST':
         form = GuidesForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()   # simply save both fields if present
+            form.save()
             return redirect('guide_list')
     else:
         form = GuidesForm()
@@ -23,7 +23,6 @@ def guide_update(request, pk):
     if request.method == 'POST':
         form = GuidesForm(request.POST, request.FILES, instance=guide)
         if form.is_valid():
-            # form.save() will update only the changed fields, leave the other intact
             form.save()
             return redirect('guide_list')
     else:

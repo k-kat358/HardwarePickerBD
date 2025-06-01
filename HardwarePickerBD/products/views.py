@@ -68,7 +68,7 @@ def place_order(request):
     order = Order.objects.create(user=request.user, total_amount=total_amount)
 
     for item in cart_items:
-        product = item.product_object  # This uses your existing product_object property
+        product = item.product_object
         OrderItem.objects.create(
             order=order,
             product_type=item.product_type,
@@ -83,7 +83,6 @@ def place_order(request):
 
 @login_required
 def delete_order(request, order_id):
-    # Ensure user can only delete their own orders
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
     if request.method == 'POST':
@@ -99,7 +98,6 @@ def delete_order(request, order_id):
 def order_details(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
-    # Prepare order items with product details
     items_with_products = []
     for item in order.items.all():
         product = None
@@ -193,15 +191,9 @@ def case_detail(request, case_id):
     return render(request, 'products/details.html', {'object': case})
 
 
-
-
-
-# ... [Keep all your existing view functions above unchanged] ...
-
 @login_required
 def view_cart(request):
     cart_items = CartItem.objects.filter(user=request.user)
-    # Initialize component slots
     components = {
         'CPU': None,
         'MOBO': None,
@@ -214,7 +206,6 @@ def view_cart(request):
     }
     compatibility_issues = defaultdict(list)
 
-    # Populate main dict
     for item in cart_items:
         prod = item.product_object
         if not prod:
@@ -233,7 +224,6 @@ def view_cart(request):
         for it in cart_items.filter(product_type=ptype, product_id=pid):
             compatibility_issues[it.id].append(msg)
 
-    # Utility normalization and splitter
     def norm(val): return val.strip().lower() if isinstance(val, str) else val
     def split_multi(val):
         if not isinstance(val, str):
@@ -289,12 +279,12 @@ def view_cart(request):
     # 6. GPU <-> Case clearance
     if case and gpu and hasattr(case, 'gpu_and_cooler_clearance') and hasattr(gpu, 'dimension_weight'):
         try:
-            # Extract GPU length from string like "357.6 x 149.3 x 70.1mm"
+            #extract GPU length from string like "357.6 x 149.3 x 70.1mm"
             gpu_dimensions = gpu.dimension_weight.lower().replace('mm', '').strip()
             gpu_length_str = gpu_dimensions.split('x')[0].strip()
             gpu_length = float(gpu_length_str)
 
-            # Extract Case GPU clearance from string like "350mm,160mm"
+            #extract Case GPU clearance from string like "350mm,160mm"
             clearance_parts = case.gpu_and_cooler_clearance.lower().replace('mm', '').split(',')
             case_gpu_clearance = float(clearance_parts[0].strip())
 

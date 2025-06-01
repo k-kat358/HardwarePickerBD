@@ -8,14 +8,12 @@
 </div>
 
 
-    <!-- Create Guide Button -->
     {% if user.is_authenticated and user.is_superuser %}
     <div class="text-end mb-3">
         <a href="{% url 'guide_create' %}" class="btn btn-primary" style="width: 150px;">Create Guide</a>
     </div>
     {% endif %}
 
-    <!-- Blog Style Guides - Now in 2-column layout -->
     <div class="row">
         {% for guide in guides %}
         <div class="col-md-6 mb-4">

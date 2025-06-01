@@ -20,7 +20,6 @@ class UserProfileForm(forms.ModelForm):
 
     def save(self, commit=True):
         profile = super().save(commit=False)
-        # Save email to related User model
         profile.user.email = self.cleaned_data['email']
         if commit:
             profile.user.save()

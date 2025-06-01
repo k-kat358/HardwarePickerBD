@@ -34,7 +34,6 @@ class GuidesForm(forms.ModelForm):
             hostname = parsed.hostname or ''
             if not any(domain in hostname for domain in ['youtube.com', 'youtu.be']):
                 raise forms.ValidationError("Only YouTube URLs are allowed.")
-            # verify ID can be extracted
             vid = None
             if 'youtu.be' in hostname:
                 vid = parsed.path.lstrip('/')
@@ -47,8 +46,6 @@ class GuidesForm(forms.ModelForm):
                 raise forms.ValidationError("Could not extract a valid video ID.")
         return url
 
-    # remove the previous ‘either-or’ clean; we now allow both fields
     def clean(self):
         cleaned = super().clean()
-        # no extra cross-field validation needed
         return cleaned

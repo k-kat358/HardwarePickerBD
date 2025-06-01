@@ -23,5 +23,5 @@ from .import views
 
 urlpatterns = [
     path('profile/', views.userprofile, name='profile'),
-path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]
