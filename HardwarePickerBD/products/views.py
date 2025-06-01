@@ -214,7 +214,7 @@ def view_cart(request):
     }
     compatibility_issues = defaultdict(list)
 
-    # Populate components dict
+    # Populate main dict
     for item in cart_items:
         prod = item.product_object
         if not prod:

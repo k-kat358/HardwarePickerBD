@@ -18,14 +18,14 @@ def home(request):
     guides = Guides.objects.all()
     top_blogs = BlogPost.objects.annotate(like_count=Count('likes')).order_by('-like_count')[:3]
 
-    return render(request, 'components/home.html', {
+    return render(request, 'main/home.html', {
         'guides': guides,
         'top_blogs': top_blogs,
     })
 
 
 def builder(request):
-    return render(request, 'components/builder.html')
+    return render(request, 'main/builder.html')
 
 
 def register(request):
