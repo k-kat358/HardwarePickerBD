@@ -1,74 +1,257 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container my-4">
-    <div style="text-align: center; margin-top: 30px;">
-    <h1 class="m-0" style="font-size: 40px; color: #0d6efd; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
-        Guides made by experts
-    </h1>
-</div>
-
+<body style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); min-height: 100vh;">
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <div class="mb-3">
+            <i class="fa-solid fa-handshake-angle" style="font-size: 3rem; color: #fff;"></i>
+        </div>
+        <h1 class="mb-1" style="color: white; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            Expert Build Guides
+        </h1>
+        <p class="lead text-light" style="opacity: 0.9;">Professional PC building guides brought to you by hardware experts</p>
+    </div>
 
     {% if user.is_authenticated and user.is_superuser %}
-    <div class="text-end mb-3">
-        <a href="{% url 'guide_create' %}" class="btn btn-primary" style="width: 150px;">Create Guide</a>
+    <div class="text-end mb-4">
+        <a href="{% url 'guide_create' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle me-2"></i>Create New Guide
+        </a>
     </div>
     {% endif %}
 
-    <div class="row">
+    <div class="row g-4">
         {% for guide in guides %}
-        <div class="col-md-6 mb-4">
-            <div class="card h-100" style="border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-                <div class="card-header bg-primary text-white" style="font-size: 20px; padding: 15px;">
-                    <h2 style="margin: 0; font-size: 18px;">{{ guide.title }}</h2>
+        <div class="col-lg-6">
+            <div class="card h-100 border-0 shadow-lg" style="border-radius: 12px; overflow: hidden; transition: transform 0.3s ease;">
+                <div class="card-header bg-primary text-white py-3" style="font-size: 1.1rem;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0" style="font-size: 1.3rem;">{{ guide.title }}</h3>
+                        {% if user.is_authenticated and user.is_superuser %}
+                        <div>
+                            <a href="{% url 'guide_update' guide.pk %}" class="btn btn-sm btn-light text-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="card-body" style="padding: 20px;">
-                    <!-- Display image -->
+
+                <div class="card-body" style="background-color: #fff;">
+                    <!-- Media Content -->
                     {% if guide.video_url %}
-                    <div class="mb-3 text-center">
+                    <div class="mb-4 rounded overflow-hidden" style="box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                         <div class="ratio ratio-16x9">
                             <iframe src="https://www.youtube.com/embed/{{ guide.get_video_id }}"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowfullscreen
-                                    class="rounded"
                                     style="border: none;"></iframe>
                         </div>
                     </div>
                     {% elif guide.image %}
-                    <div class="mb-3 text-center">
+                    <div class="mb-4 text-center">
                         <img src="{{ guide.image.url }}" alt="{{ guide.title }}"
                              class="img-fluid rounded"
-                             style="max-height: 300px; max-width: 100%; object-fit: cover; border: 1px solid #dee2e6;">
+                             style="max-height: 280px; width: 100%; object-fit: cover; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     </div>
                     {% endif %}
 
-                    <p><strong>CPU:</strong> {{ guide.cpu }}</p>
-                    <p><strong>CPU Cooler:</strong> {{ guide.cpu_cooler }}</p>
-                    <p><strong>Motherboard:</strong> {{ guide.motherboard }}</p>
-                    <p><strong>Memory:</strong> {{ guide.memory }}</p>
-                    <p><strong>Storage:</strong> {{ guide.storage }}</p>
-                    <p><strong>GPU:</strong> {{ guide.gpu }}</p>
-                    <p><strong>PSU:</strong> {{ guide.psu }}</p>
-                    <p><strong>Case:</strong> {{ guide.case }}</p>
+                    <!-- Component List -->
+                    <div class="row g-3">
+                        <!-- CPU -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-cpu text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">CPU</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.cpu }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- CPU Cooler -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-fan text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">Cooler</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.cpu_cooler }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Motherboard -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-motherboard text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">Motherboard</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.motherboard }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Memory -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-memory text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">Memory</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.memory }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Storage -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-device-hdd text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">Storage</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.storage }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GPU -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-gpu-card text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">GPU</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.gpu }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PSU -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-plug text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">PSU</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.psu }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Case -->
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center bg-light p-3 rounded component-card"
+                                 style="transition: all 0.3s ease;">
+                                <div class="d-flex align-items-center justify-content-center me-3 icon-container"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-pc text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 2px 2px rgba(0, 123, 255, 0.3));"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0 text-muted">Case</h6>
+                                    <p class="mb-0 fw-bold">{{ guide.case }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer text-end" style="background-color: #f8f9fa; padding: 10px;">
+
+                <div class="card-footer bg-light border-0 py-3">
                     {% if user.is_authenticated and user.is_superuser %}
-                    <a href="{% url 'guide_update' guide.pk %}" class="btn btn-warning btn-sm">Edit</a>
-                    <form action="{% url 'guide_delete' guide.pk %}" method="post" style="display: inline-block;"
-                          onsubmit="return confirm('Are you sure you want to delete this guide?\nThis action cannot be undone.')">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                    </form>
+                    <div class="d-flex justify-content-end">
+                        <form action="{% url 'guide_delete' guide.pk %}" method="post" class="d-inline"
+                              onsubmit="return confirm('Are you sure you want to delete this guide?\nThis action cannot be undone.')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-1"></i>Delete Guide
+                            </button>
+                        </form>
+                    </div>
                     {% endif %}
                 </div>
             </div>
         </div>
         {% empty %}
         <div class="col-12">
-            <div class="alert alert-info text-center" style="font-size: 18px; padding: 20px;">
-                No guides available.
+            <div class="card border-0 shadow-lg">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                    <h3 class="text-muted">No Guides Available</h3>
+                    <p class="text-muted">Check back later for expert build guides</p>
+                    {% if user.is_authenticated and user.is_superuser %}
+                    <a href="{% url 'guide_create' %}" class="btn btn-primary mt-2">
+                        <i class="fas fa-plus-circle me-2"></i>Create First Guide
+                    </a>
+                    {% endif %}
+                </div>
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .component-card {
+        transition: all 0.3s ease;
+    }
+
+    .component-card:hover {
+        background-color: #e9ecef !important;
+        transform: scale(1.02);
+    }
+
+    .component-card:hover .icon-container i {
+        transform: scale(1.2);
+        filter: drop-shadow(0 3px 3px rgba(0, 123, 255, 0.4));
+    }
+
+    .icon-container i {
+        transition: all 0.3s ease;
+    }
+
+    .card-header h3 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Ensure consistent icon sizing */
+    .bi {
+        font-size: 1.5rem !important;
+    }
+</style>
 {% endblock %}

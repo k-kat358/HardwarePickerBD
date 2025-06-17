@@ -11,16 +11,28 @@
           <h6 style="font-size: 18px; margin: 0;">HardwarePickerBD</h6>
         </div>
 
-        <!-- Features Column -->
-        <div class="pro col-mb-5" style="flex: 1 1 200px;">
-          <h6 style="position: relative; display: inline-block; margin-bottom: 10px;">
-            Features
-            <span style="display: block; height: 3px; width: 100%; background-color: #1976d2; box-shadow: 0 2px 5px #1976d2; border-radius: 2px; margin-top: 4px;"></span>
-          </h6>
-          <p><a href="{% url 'cpu' %}" class="text-light text-decoration-none hover-underline">Builder</a></p>
-          <p><a href="{% url 'guide_list' %}" class="text-light text-decoration-none hover-underline">Guides</a></p>
-          <p><a href="{% url 'blog' %}" class="text-light text-decoration-none hover-underline">BuildHub</a></p>
-        </div>
+       <!-- Features Column -->
+<!-- Features Column -->
+<div class="pro col-mb-5" style="flex: 1 1 200px;">
+  <h6 style="position: relative; display: inline-block; margin-bottom: 15px;">
+    Features
+    <span style="display: block; height: 3px; width: 100%; background-color: #1976d2; box-shadow: 0 2px 5px #1976d2; border-radius: 2px; margin-top: 4px;"></span>
+  </h6>
+  <div class="row" style="margin: 0 -5px;">
+    <div class="col-6" style="padding: 0 5px;">
+      <a href="{% url 'cpu' %}" class="text-light text-decoration-none hover-underline d-block mb-2">Builder</a>
+    </div>
+    <div class="col-6" style="padding: 0 5px;">
+      <a href="{% url 'guide_list' %}" class="text-light text-decoration-none hover-underline d-block mb-2">Guides</a>
+    </div>
+    <div class="col-6" style="padding: 0 5px;">
+      <a href="{% url 'blog' %}" class="text-light text-decoration-none hover-underline d-block mb-2">BuildHub</a>
+    </div>
+    <div class="col-6" style="padding: 0 5px;">
+      <a href="{% url 'cart_view' %}" class="text-light text-decoration-none hover-underline d-block mb-2">Cart</a>
+    </div>
+  </div>
+</div>
 
         <!-- Account Column -->
         <div class="account col-mb-5" style="flex: 1 1 200px;">
@@ -37,7 +49,7 @@
   </section>
 
   <div class="copy text-center p-4" style="color: rgb(246, 239, 239);">
-    © Samir, Sadia, Emon
+    <p>©<a href="https://www.facebook.com/skylake.zucced/"> Samir Sadee </a>| 2025</p>
   </div>
 </footer>
 
